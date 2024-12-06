@@ -9,8 +9,8 @@
 
 4. Перейти в папку скринкаста и установить зависимости
 
-    cd tulgu-blockchain-lessons/screencast-1/
-    npm install
+    - cd tulgu-blockchain-lessons/screencast-1/
+    - npm install
 
 5. Установить приложение для запуска TypeScript
 
