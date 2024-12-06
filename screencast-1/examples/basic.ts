@@ -29,7 +29,6 @@ class Block {
         this.nonce = 0;
     }
 
-    // Вычисление хэша блока
     calculateHash() {
         return crypto
             .createHash('sha256')
@@ -63,26 +62,24 @@ class Blockchain {
         this.chain = [this.createGenesisBlock()];
         this.difficulty = 2;
         this.pendingTransactions = [];
-        this.miningReward = 100;
+        this.miningReward = 3;
     }
 
-    // Создание начального блока
     createGenesisBlock() {
         return new Block('01/01/2024', [], '0');
     }
 
-    // Получение последнего блока
     getLatestBlock() {
         return this.chain[this.chain.length - 1];
     }
 
-    // Создание транзакции
     createTransaction(transaction) {
         this.pendingTransactions.push(transaction);
     }
 
-    // Майн блок с транзакциями
     minePendingTransactions(miningRewardAddress) {
+        this.pendingTransactions.push(new Transaction(null, miningRewardAddress, this.miningReward));
+
         const block = new Block(
             Date.now(),
             this.pendingTransactions,
@@ -93,13 +90,9 @@ class Blockchain {
         console.log('Блок замайнен и добавлен в цепочку.');
         this.chain.push(block);
 
-        // Вознаграждение майнеру
-        this.pendingTransactions = [
-            new Transaction(null, miningRewardAddress, this.miningReward)
-        ];
+        this.pendingTransactions = [];
     }
 
-    // Получение баланса адреса
     getBalanceOfAddress(address) {
         let balance = 0;
 
@@ -119,14 +112,15 @@ class Blockchain {
     }
 }
 
-// Пример использования
 const myCoin = new Blockchain();
+
+console.log("Блокчейн создан!");
 
 // Создание транзакций
 myCoin.createTransaction(new Transaction('address1', 'address2', 50));
 myCoin.createTransaction(new Transaction('address2', 'address1', 20));
 
-// Майн блок с транзакциями
+// Майнинг
 console.log('Майнинг блока...');
 myCoin.minePendingTransactions('minerAddress');
 
@@ -135,9 +129,11 @@ console.log(`Баланс address1: ${myCoin.getBalanceOfAddress('address1')}`);
 console.log(`Баланс address2: ${myCoin.getBalanceOfAddress('address2')}`);
 console.log(`Баланс minerAddress: ${myCoin.getBalanceOfAddress('minerAddress')}`);
 
-// Второй майнинг
+// Новые транзакции
+myCoin.createTransaction(new Transaction('minerAddress', 'address2', 1));
 console.log('Майнинг второго блока...');
-myCoin.minePendingTransactions('minerAddress');
+myCoin.minePendingTransactions('minerAddress2');
 
-// Проверка балансов после второго майнинга
+console.log(`Баланс address2: ${myCoin.getBalanceOfAddress('address2')}`);
 console.log(`Баланс minerAddress: ${myCoin.getBalanceOfAddress('minerAddress')}`);
+console.log(`Баланс minerAddress2: ${myCoin.getBalanceOfAddress('minerAddress2')}`);
